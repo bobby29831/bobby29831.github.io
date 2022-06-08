@@ -5241,6 +5241,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
+var $author$project$Main$Integer = function (a) {
+	return {$: 'Integer', a: a};
+};
 var $author$project$Main$Model = function (number) {
 	return {number: number};
 };
@@ -5248,7 +5251,8 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$Main$Model(0.0),
+		$author$project$Main$Model(
+			$author$project$Main$Integer(0)),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5256,9 +5260,17 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
+var $author$project$Main$Float = function (a) {
+	return {$: 'Float', a: a};
+};
 var $author$project$Main$Update = function (a) {
 	return {$: 'Update', a: a};
 };
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var $elm$random$Random$Generator = function (a) {
 	return {$: 'Generator', a: a};
 };
@@ -5396,27 +5408,77 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+				var lo = _v0.a;
+				var hi = _v0.b;
+				var range = (hi - lo) + 1;
+				if (!((range - 1) & range)) {
+					return _Utils_Tuple2(
+						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+						$elm$random$Random$next(seed0));
+				} else {
+					var threshhold = (((-range) >>> 0) % range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var x = $elm$random$Random$peel(seed);
+							var seedN = $elm$random$Random$next(seed);
+							if (_Utils_cmp(x, threshhold) < 0) {
+								var $temp$seed = seedN;
+								seed = $temp$seed;
+								continue accountForBias;
+							} else {
+								return _Utils_Tuple2((x % range) + lo, seedN);
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'Decimal') {
-			return _Utils_Tuple2(
-				model,
-				A2(
-					$elm$random$Random$generate,
-					$author$project$Main$Update,
-					A2($elm$random$Random$float, 0, 1)));
-		} else {
-			var num = msg.a;
-			return _Utils_Tuple2(
-				$author$project$Main$Model(num),
-				$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'Whole':
+				return _Utils_Tuple2(
+					model,
+					A2(
+						$elm$random$Random$generate,
+						A2($elm$core$Basics$composeR, $author$project$Main$Integer, $author$project$Main$Update),
+						A2($elm$random$Random$int, 0, 10)));
+			case 'Decimal':
+				return _Utils_Tuple2(
+					model,
+					A2(
+						$elm$random$Random$generate,
+						A2($elm$core$Basics$composeR, $author$project$Main$Float, $author$project$Main$Update),
+						A2($elm$random$Random$float, 0, 1)));
+			default:
+				var num = msg.a;
+				return _Utils_Tuple2(
+					$author$project$Main$Model(num),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$Decimal = {$: 'Decimal'};
+var $author$project$Main$Whole = {$: 'Whole'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $author$project$Main$numberToString = function (number) {
+	if (number.$ === 'Integer') {
+		var val = number.a;
+		return $elm$core$String$fromInt(val);
+	} else {
+		var val = number.a;
+		return $elm$core$String$fromFloat(val);
+	}
+};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5456,7 +5518,7 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						$elm$core$String$fromFloat(model.number))
+						$author$project$Main$numberToString(model.number))
 					])),
 				A2(
 				$elm$html$Html$button,
@@ -5467,6 +5529,16 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Try it')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$Whole)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Try it but whole!')
 					]))
 			]));
 };

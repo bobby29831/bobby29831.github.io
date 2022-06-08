@@ -14,25 +14,44 @@ main =
     }
 
 type alias Model =
-    { number: Float
+    { number: Number
     }
 
 init : () -> (Model, Cmd Msg)
 init _ =
-    ( Model 0.0
+    ( Model (Integer 0)
     , Cmd.none
     )
 
+type Number
+    = Integer Int
+    | Float Float
+
+numberToString : Number -> String
+numberToString number =
+    case number of
+        Integer val ->
+            String.fromInt val
+
+        Float val ->
+            String.fromFloat val
+
 type Msg
     = Decimal
-    | Update Float
+    | Whole
+    | Update Number
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
+        Whole ->
+            ( model
+            , Random.generate (Integer >> Update) (Random.int 0 10)
+            )
+
         Decimal ->
             ( model
-            , Random.generate Update (Random.float 0 1)
+            , Random.generate (Float >> Update) (Random.float 0 1)
             )
 
         Update num ->
@@ -48,6 +67,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ h2 [] [ text "ben7g NUMBER MACHINE (but in elm)" ]
-        , p [] [ text (String.fromFloat model.number) ]
+        , p [] [ text (numberToString model.number) ]
         , button [ onClick Decimal ] [ text "Try it" ]
+        , button [ onClick Whole ] [ text "Try it but whole!" ]
         ]
