@@ -19,13 +19,14 @@ type alias Model =
 
 init : () -> (Model, Cmd Msg)
 init _ =
-    ( Model (Integer 0)
+    ( Model None
     , Cmd.none
     )
 
 type Number
     = Integer Int
     | Float Float
+    | None
 
 numberToString : Number -> String
 numberToString number =
@@ -35,6 +36,9 @@ numberToString number =
 
         Float val ->
             String.fromFloat val
+
+        None ->
+            "Number generator!"
 
 type Msg
     = Decimal

@@ -2,8 +2,10 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Main</title>
-  <style>body { padding: 0; margin: 0; }</style>
+  <title>Number Generator</title>
+  <meta name="application-name" content="ben7g number generator">
+  <meta name="description" content="This is a recreation of the website, https://dzurgon.com/ in elm.">
+  <meta name="author" content="bobby29831">
 </head>
 
 <body>
@@ -5235,18 +5237,15 @@ var $elm$core$Task$perform = F2(
 			A2($elm$core$Task$map, toMessage, task));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$Integer = function (a) {
-	return {$: 0, a: a};
-};
 var $author$project$Main$Model = function (number) {
 	return {U: number};
 };
+var $author$project$Main$None = {$: 2};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$Main$Model(
-			$author$project$Main$Integer(0)),
+		$author$project$Main$Model($author$project$Main$None),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5256,6 +5255,9 @@ var $author$project$Main$subscriptions = function (_v0) {
 };
 var $author$project$Main$Float = function (a) {
 	return {$: 1, a: a};
+};
+var $author$project$Main$Integer = function (a) {
+	return {$: 0, a: a};
 };
 var $author$project$Main$Update = function (a) {
 	return {$: 2, a: a};
@@ -5454,12 +5456,15 @@ var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $author$project$Main$numberToString = function (number) {
-	if (!number.$) {
-		var val = number.a;
-		return $elm$core$String$fromInt(val);
-	} else {
-		var val = number.a;
-		return $elm$core$String$fromFloat(val);
+	switch (number.$) {
+		case 0:
+			var val = number.a;
+			return $elm$core$String$fromInt(val);
+		case 1:
+			var val = number.a;
+			return $elm$core$String$fromFloat(val);
+		default:
+			return 'Number generator!';
 	}
 };
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
